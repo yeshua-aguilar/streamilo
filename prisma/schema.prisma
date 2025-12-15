@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model usuario {
+  id           BigInt    @id
+  usuario      String
+  password     String
+  creacion     DateTime? @db.Date
+  actulizacion DateTime? @db.Date
+}
