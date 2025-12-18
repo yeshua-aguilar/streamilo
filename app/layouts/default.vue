@@ -12,6 +12,9 @@
           <NuxtLink to="/home" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
             Home
           </NuxtLink>
+          <NuxtLink to="/categoria" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+            Categorías
+          </NuxtLink>
           <UButton
             to="/login"
             color="primary"

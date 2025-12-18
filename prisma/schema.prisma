@@ -7,10 +7,42 @@ datasource db {
   provider = "postgresql"
 }
 
-model usuario {
-  id           BigInt    @id
-  usuario      String
-  password     String
-  creacion     DateTime? @db.Date
-  actulizacion DateTime? @db.Date
+model comentarios {
+  id         BigInt    @id @default(autoincrement())
+  usuario_id BigInt?
+  contenido  String
+  fecha      DateTime? @default(now()) @db.Timestamptz(6)
+  usuarios   usuarios? @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model playlists {
+  id         BigInt    @id @default(autoincrement())
+  nombre     String
+  usuario_id BigInt?
+  usuarios   usuarios? @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos     videos[]
+}
+
+model roles {
+  id       BigInt     @id @default(autoincrement())
+  name     String
+  usuarios usuarios[]
+}
+
+model usuarios {
+  id          BigInt        @id @default(autoincrement())
+  username    String
+  email       String        @unique
+  password    String
+  role_id     BigInt?
+  comentarios comentarios[]
+  playlists   playlists[]
+  roles       roles?        @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model videos {
+  id          BigInt     @id @default(autoincrement())
+  url         String
+  playlist_id BigInt?
+  playlists   playlists? @relation(fields: [playlist_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
