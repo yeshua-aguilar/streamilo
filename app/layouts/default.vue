@@ -1,4 +1,11 @@
 <script setup lang="ts">
+const token = useCookie('auth_token')
+const router = useRouter()
+
+const logout = () => {
+  token.value = null
+  router.push('/login')
+}
 </script>
 
 <template>

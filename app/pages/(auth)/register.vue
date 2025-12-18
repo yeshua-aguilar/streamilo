@@ -1,18 +1,52 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 definePageMeta({
   layout: 'auth'
 })
 
 const state = reactive({
-  name: '',
+  username: '',
   email: '',
   password: '',
   confirmPassword: ''
 })
 
-const onSubmit = () => {
-  // TODO: Implementar lógica de registro
-  console.log('Register attempt', state)
+const toast = useToast()
+const router = useRouter()
+
+const onSubmit = async () => {
+  if (state.password !== state.confirmPassword) {
+    toast.add({
+      title: 'Error',
+      description: 'Las contraseñas no coinciden',
+      color: 'error'
+    })
+    return
+  }
+
+  try {
+    await axios.post('/api/auth/register', {
+      username: state.username,
+      email: state.email,
+      password: state.password
+    })
+
+    toast.add({
+      title: 'Éxito',
+      description: 'Usuario registrado correctamente',
+      color: 'success'
+    })
+    
+    router.push('/login')
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.statusMessage || error.message || 'Ocurrió un error al registrarse'
+    toast.add({
+      title: 'Error',
+      description: errorMessage,
+      color: 'error'
+    })
+  }
 }
 </script>
 
@@ -28,8 +62,12 @@ const onSubmit = () => {
     </div>
 
     <UForm :state="state" @submit="onSubmit" class="space-y-6">
-      <UFormField label="Usuario" name="name">
-        <UInput v-model="state.name" type="text" placeholder="Tu nombre" icon="i-heroicons-user" class="w-full" />
+      <UFormField label="Usuario" name="username">
+        <UInput v-model="state.username" type="text" placeholder="Tu usuario" icon="i-heroicons-user" class="w-full" />
+      </UFormField>
+
+      <UFormField label="Correo electrónico" name="email">
+        <UInput v-model="state.email" type="email" placeholder="tu@email.com" icon="i-heroicons-envelope" class="w-full" />
       </UFormField>
 
       <UFormField label="Contraseña" name="password">

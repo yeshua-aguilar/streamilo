@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 definePageMeta({
   layout: 'auth'
 })
@@ -8,9 +10,31 @@ const state = reactive({
   password: ''
 })
 
-const onSubmit = () => {
-  // TODO: Implementar lógica de login
-  console.log('Login attempt', state)
+const toast = useToast()
+const router = useRouter()
+const token = useCookie('auth_token')
+
+const onSubmit = async () => {
+  try {
+    const { data } = await axios.post('/api/auth/login', state)
+
+    token.value = data.token
+    
+    toast.add({
+      title: 'Éxito',
+      description: 'Sesión iniciada correctamente',
+      color: 'success'
+    })
+
+    router.push('/')
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.statusMessage || error.message || 'Credenciales inválidas'
+    toast.add({
+      title: 'Error',
+      description: errorMessage,
+      color: 'error'
+    })
+  }
 }
 </script>
 
